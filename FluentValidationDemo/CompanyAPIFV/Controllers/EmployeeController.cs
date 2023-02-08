@@ -1,6 +1,8 @@
 ﻿using CompanyAPIFV.Application.Contracts;
 using CompanyAPIFV.Domain.Models;
+using CompanyAPIFV.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace CompanyAPIFV.Controllers
@@ -9,13 +11,17 @@ namespace CompanyAPIFV.Controllers
     [Route("[controller]")]
     public class EmployeeController : ControllerBase
     {
-        public EmployeeController()
-        {
+        private readonly EmployeeRepository _employeeRepository;
+        private readonly ProjectRepository _projectRepository;
 
+        public EmployeeController(EmployeeRepository employeeRepository, ProjectRepository projectRepository)
+        {
+            _employeeRepository = employeeRepository;
+            _projectRepository = projectRepository;
         }
 
         [HttpPost]
-        public IActionResult RegisterEmplyee(RegisterEmployeeRequest request) 
+        public IActionResult RegisterEmployee(RegisterEmployeeRequest request) 
         {
             if (request == null)
                 return BadRequest("Request cannot be empty");
@@ -34,12 +40,58 @@ namespace CompanyAPIFV.Controllers
 
             // TODO - Validate Email uniqueness
 
-            var employee = new Employee(request.Email, request.Name);
-            //_employeeRepository.Save(employee);
+            var employee = new Employee(request.Email, request.Name, request.Address);
+            _employeeRepository.Save(employee);
 
             var response = new RegisterEmployeeResponse { Id = employee.Id };
 
             return Ok(response);
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult EditPersonalInformation(long id, [FromBody]EditPersonalInformationRequest request)
+        {
+            Employee employee = _employeeRepository.GetById(id);
+
+            employee.EditPersonalInformation(request.Name, request.Address);
+            _employeeRepository.Save(employee);
+
+            return Ok();
+        }
+
+        [HttpPost("{id}/assign")]
+        public IActionResult AssignToProject(long id, [FromBody]AssignToProjectRequest request)
+        {
+            Employee employee = _employeeRepository.GetById(id);
+
+            foreach (ProjectAssignmentDto projectAssignmentDto in request.ProjectAssignments)
+            {
+                Project project = _projectRepository.GetByName(projectAssignmentDto.Project);
+                var seniority = Enum.Parse<Seniority>(projectAssignmentDto.Seniority);
+
+                employee.AssignToProject(project, seniority);
+            }
+
+            return Ok();
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult Get(long id)
+        {
+            Employee employee = _employeeRepository.GetById(id);
+
+            var resonse = new GetEmployeeResponse
+            {
+                Address = employee.Address,
+                Email = employee.Email,
+                Name = employee.Name,
+                ProjectAssignments = employee.ProjectAssignments.Select(x => new ProjectAssignmentDto
+                {
+                    Project = x.Project.Name,
+                    Seniority = x.Seniority.ToString()
+                }).ToArray()
+            };            
+            return Ok(resonse);
         }
     }
 }

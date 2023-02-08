@@ -1,4 +1,4 @@
-﻿namespace CompanyAPIFV.Domain.Models.Common
+﻿namespace CompanyAPIFV.Domain.SeedWork
 {
     public abstract class Entity
     {
