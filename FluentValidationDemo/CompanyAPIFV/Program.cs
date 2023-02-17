@@ -1,3 +1,4 @@
+using CompanyAPIFV.Application;
 using CompanyAPIFV.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +26,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ExceptionHandler>();
 
 app.UseHttpsRedirection();
 
