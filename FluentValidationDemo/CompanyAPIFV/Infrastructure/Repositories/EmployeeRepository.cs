@@ -40,7 +40,10 @@ namespace CompanyAPIFV.Infrastructure.Repositories
 
         private static Employee Marco()
         {
-            var marco = new Employee("marco@supercompany.com", "Marco Antonio", "1946 Genova St, Genova, IT, 16100");
+            var marco = new Employee(
+                "marco@supercompany.com", 
+                "Marco Antonio", 
+                new Address("1946 Genova St", "Genova", "IT", "16100"));
             SetId(marco, 1);
             marco.AssignToProject(new Project(1, "Regulated Reports"), Seniority.Senior);
 
@@ -49,7 +52,10 @@ namespace CompanyAPIFV.Infrastructure.Repositories
 
         private static Employee Miguel()
         {
-            var miguel = new Employee("miguel@supercompany.com", "Miguel San", "29003 Malaga Street, Malaga, ES, 29003");
+            var miguel = new Employee(
+                "miguel@supercompany.com", 
+                "Miguel San", 
+                new Address("29003 Malaga Street", "Malaga", "ES", "29003"));
             SetId(miguel, 2);            
             miguel.AssignToProject(new Project(2, "User Experience"), Seniority.Expert);
 

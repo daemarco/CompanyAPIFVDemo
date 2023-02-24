@@ -8,21 +8,21 @@ namespace CompanyAPIFV.Domain.Models
     {
         public string Email { get; }
         public string Name { get; private set; }
-        public string Address { get; private set; }
+        public Address Address { get; private set; }
 
         private readonly List<ProjectAssignment> _projectAssignment = new List<ProjectAssignment>();
         public virtual IReadOnlyList<ProjectAssignment> ProjectAssignments => _projectAssignment;
 
         protected Employee() { }
 
-        public Employee(string email, string name, string address)
+        public Employee(string email, string name, Address address)
             : this()
         {
             Email = email;
             EditPersonalInformation(name, address);
         }
 
-        public void EditPersonalInformation(string name, string address)
+        public void EditPersonalInformation(string name, Address address)
         {
             Name = name;
             Address = address;

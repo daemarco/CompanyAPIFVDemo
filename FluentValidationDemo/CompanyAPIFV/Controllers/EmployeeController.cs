@@ -36,21 +36,14 @@ namespace CompanyAPIFV.Controllers
             //if (request == null)
             //    return BadRequest("Request cannot be empty");
 
-            //if (string.IsNullOrWhiteSpace(request.Name))
-            //    return BadRequest("Name cannot be empty");
-            //if (request.Name.Length > 250)
-            //    return BadRequest("Name too long");
-
-            //if (string.IsNullOrWhiteSpace(request.Email))
-            //    return BadRequest("Name cannot be empty");
-            //if (request.Email.Length > 100)
-            //    return BadRequest("Name too long");
-            //if (Regex.IsMatch(request.Email, @"^(.+)@(.+)$") == false)
-            //    return BadRequest("Email in invalid format");
-
             // TODO - Validate Email uniqueness
 
-            var employee = new Employee(request.Email, request.Name, request.Address);
+            var address = new Address(
+                request.Address.Street, 
+                request.Address.City, 
+                request.Address.State, 
+                request.Address.ZipCode);
+            var employee = new Employee(request.Email, request.Name, address);
             _employeeRepository.Save(employee);
 
             var response = new RegisterEmployeeResponse { Id = employee.Id };
@@ -63,8 +56,8 @@ namespace CompanyAPIFV.Controllers
         {
             Employee employee = _employeeRepository.GetById(id);
 
-            employee.EditPersonalInformation(request.Name, request.Address);
-            _employeeRepository.Save(employee);
+            //employee.EditPersonalInformation(request.Name, request.Address);
+            //_employeeRepository.Save(employee);
 
             return Ok();
         }
@@ -92,7 +85,13 @@ namespace CompanyAPIFV.Controllers
 
             var resonse = new GetEmployeeResponse
             {
-                Address = employee.Address,
+                Address = new AddressDto
+                {
+                    City = employee.Address.City,
+                    State = employee.Address.State,
+                    Street= employee.Address.Street,
+                    ZipCode= employee.Address.ZipCode,
+                },
                 Email = employee.Email,
                 Name = employee.Name,
                 ProjectAssignments = employee.ProjectAssignments.Select(x => new ProjectAssignmentDto

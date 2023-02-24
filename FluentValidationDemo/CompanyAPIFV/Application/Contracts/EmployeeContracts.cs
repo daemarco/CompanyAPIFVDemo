@@ -6,7 +6,15 @@ namespace CompanyAPIFV.Application.Contracts
     {
         public string Name { get; set; }
         public string Email { get; set; }
-        public string Address { get; set; }
+        public AddressDto Address { get; set; }
+    }
+
+    public class AddressDto
+    {
+        public string Street { get; set; }
+        public string City { get; set; }
+        public string State { get; set;  }
+        public string ZipCode { get; set; }
     }
 
     public class RegisterEmployeeResponse
@@ -35,7 +43,7 @@ namespace CompanyAPIFV.Application.Contracts
     {
         public string Name { get; set; }
         public string Email { get; set; }
-        public string Address { get; set; }
+        public AddressDto Address { get; set; }
         public ProjectAssignmentDto[] ProjectAssignments { get; set; }
     }
 }
