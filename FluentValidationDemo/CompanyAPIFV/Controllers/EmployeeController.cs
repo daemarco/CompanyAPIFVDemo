@@ -1,6 +1,8 @@
 ﻿using CompanyAPIFV.Application.Contracts;
+using CompanyAPIFV.Application.Validators;
 using CompanyAPIFV.Domain.Models;
 using CompanyAPIFV.Infrastructure.Repositories;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
@@ -23,20 +25,28 @@ namespace CompanyAPIFV.Controllers
         [HttpPost]
         public IActionResult RegisterEmployee(RegisterEmployeeRequest request) 
         {
-            if (request == null)
-                return BadRequest("Request cannot be empty");
+            var validator = new RegisterEmployeeRequestValidator();
+            ValidationResult result = validator.Validate(request);
 
-            if (string.IsNullOrWhiteSpace(request.Name))
-                return BadRequest("Name cannot be empty");
-            if (request.Name.Length > 250)
-                return BadRequest("Name too long");
+            if (!result.IsValid)
+            {
+                return BadRequest(result.Errors[0].ErrorMessage);
+            }
 
-            if (string.IsNullOrWhiteSpace(request.Email))
-                return BadRequest("Name cannot be empty");
-            if (request.Email.Length > 100)
-                return BadRequest("Name too long");
-            if (Regex.IsMatch(request.Email, @"^(.+)@(.+)$") == false)
-                return BadRequest("Email in invalid format");
+            //if (request == null)
+            //    return BadRequest("Request cannot be empty");
+
+            //if (string.IsNullOrWhiteSpace(request.Name))
+            //    return BadRequest("Name cannot be empty");
+            //if (request.Name.Length > 250)
+            //    return BadRequest("Name too long");
+
+            //if (string.IsNullOrWhiteSpace(request.Email))
+            //    return BadRequest("Name cannot be empty");
+            //if (request.Email.Length > 100)
+            //    return BadRequest("Name too long");
+            //if (Regex.IsMatch(request.Email, @"^(.+)@(.+)$") == false)
+            //    return BadRequest("Email in invalid format");
 
             // TODO - Validate Email uniqueness
 
