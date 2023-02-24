@@ -56,8 +56,21 @@ namespace CompanyAPIFV.Controllers
         {
             Employee employee = _employeeRepository.GetById(id);
 
-            //employee.EditPersonalInformation(request.Name, request.Address);
-            //_employeeRepository.Save(employee);
+            var validator = new EditPersonalInformationRequestValidator();
+            ValidationResult result = validator.Validate(request);
+
+            if (!result.IsValid) 
+            {
+                return BadRequest(result.Errors[0].ErrorMessage);
+            }
+
+            var address = new Address(
+                request.Address.Street,
+                request.Address.City,
+                request.Address.State,
+                request.Address.ZipCode);
+            employee.EditPersonalInformation(request.Name, address);
+            _employeeRepository.Save(employee);
 
             return Ok();
         }

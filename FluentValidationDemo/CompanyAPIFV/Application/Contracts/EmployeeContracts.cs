@@ -25,7 +25,7 @@ namespace CompanyAPIFV.Application.Contracts
     public class EditPersonalInformationRequest 
     {
         public string Name { get; set; }
-        public string Address { get; set; }
+        public AddressDto Address { get; set; }
     }
 
     public class AssignToProjectRequest
