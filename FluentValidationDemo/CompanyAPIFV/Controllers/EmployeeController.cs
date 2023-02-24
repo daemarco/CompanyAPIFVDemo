@@ -5,6 +5,7 @@ using CompanyAPIFV.Infrastructure.Repositories;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace CompanyAPIFV.Controllers
@@ -38,12 +39,10 @@ namespace CompanyAPIFV.Controllers
 
             // TODO - Validate Email uniqueness
 
-            var address = new Address(
-                request.Address.Street, 
-                request.Address.City, 
-                request.Address.State, 
-                request.Address.ZipCode);
-            var employee = new Employee(request.Email, request.Name, address);
+            Address[] addresses = request.Addresses
+                .Select(x => new Address(x.Street, x.City, x.State, x.ZipCode))
+                .ToArray();
+            var employee = new Employee(request.Email, request.Name, addresses);
             _employeeRepository.Save(employee);
 
             var response = new RegisterEmployeeResponse { Id = employee.Id };
@@ -64,12 +63,10 @@ namespace CompanyAPIFV.Controllers
                 return BadRequest(result.Errors[0].ErrorMessage);
             }
 
-            var address = new Address(
-                request.Address.Street,
-                request.Address.City,
-                request.Address.State,
-                request.Address.ZipCode);
-            employee.EditPersonalInformation(request.Name, address);
+            Address[] addresses = request.Addresses
+                .Select(x => new Address(x.Street, x.City, x.State, x.ZipCode))
+                .ToArray();
+            employee.EditPersonalInformation(request.Name, addresses);
             _employeeRepository.Save(employee);
 
             return Ok();
@@ -98,13 +95,14 @@ namespace CompanyAPIFV.Controllers
 
             var resonse = new GetEmployeeResponse
             {
-                Address = new AddressDto
+                Addresses = employee.Addresses.Select(x => 
+                new AddressDto
                 {
-                    City = employee.Address.City,
-                    State = employee.Address.State,
-                    Street= employee.Address.Street,
-                    ZipCode= employee.Address.ZipCode,
-                },
+                    City = x.City,
+                    State = x.State,
+                    Street = x.Street,
+                    ZipCode = x.ZipCode,
+                }).ToArray(),
                 Email = employee.Email,
                 Name = employee.Name,
                 ProjectAssignments = employee.ProjectAssignments.Select(x => new ProjectAssignmentDto

@@ -8,24 +8,24 @@ namespace CompanyAPIFV.Domain.Models
     {
         public string Email { get; }
         public string Name { get; private set; }
-        public Address Address { get; private set; }
+        public Address[] Addresses { get; private set; }
 
         private readonly List<ProjectAssignment> _projectAssignment = new List<ProjectAssignment>();
         public virtual IReadOnlyList<ProjectAssignment> ProjectAssignments => _projectAssignment;
 
         protected Employee() { }
 
-        public Employee(string email, string name, Address address)
+        public Employee(string email, string name, Address[] addresses)
             : this()
         {
             Email = email;
-            EditPersonalInformation(name, address);
+            EditPersonalInformation(name, addresses);
         }
 
-        public void EditPersonalInformation(string name, Address address)
+        public void EditPersonalInformation(string name, Address[] addresses)
         {
             Name = name;
-            Address = address;
+            Addresses = addresses;
         }
 
         public virtual void AssignToProject(Project project, Seniority seniority)
