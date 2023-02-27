@@ -1,5 +1,9 @@
 using CompanyAPIFV.Application;
+using CompanyAPIFV.Application.Contracts;
+using CompanyAPIFV.Application.Validators;
 using CompanyAPIFV.Infrastructure.Repositories;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 #region Services Registrations
+
+builder.Services.AddValidatorsFromAssemblyContaining<RegisterEmployeeRequestValidator>();
 
 builder.Services.AddTransient<EmployeeRepository>();
 builder.Services.AddTransient<ProjectRepository>();

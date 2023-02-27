@@ -2,11 +2,9 @@
 using CompanyAPIFV.Application.Validators;
 using CompanyAPIFV.Domain.Models;
 using CompanyAPIFV.Infrastructure.Repositories;
+using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace CompanyAPIFV.Controllers
 {
@@ -16,18 +14,24 @@ namespace CompanyAPIFV.Controllers
     {
         private readonly EmployeeRepository _employeeRepository;
         private readonly ProjectRepository _projectRepository;
+        private readonly IValidator<RegisterEmployeeRequest> _registerValidator;
 
-        public EmployeeController(EmployeeRepository employeeRepository, ProjectRepository projectRepository)
+        public EmployeeController(
+            EmployeeRepository employeeRepository, 
+            ProjectRepository projectRepository,
+            IValidator<RegisterEmployeeRequest> registerValidator)
         {
             _employeeRepository = employeeRepository;
             _projectRepository = projectRepository;
+
+            _registerValidator = registerValidator;
         }
 
         [HttpPost]
         public IActionResult RegisterEmployee(RegisterEmployeeRequest request) 
         {
-            var validator = new RegisterEmployeeRequestValidator();
-            ValidationResult result = validator.Validate(request);
+            //var validator = new RegisterEmployeeRequestValidator();
+            ValidationResult result = _registerValidator.Validate(request);
 
             if (!result.IsValid)
             {
